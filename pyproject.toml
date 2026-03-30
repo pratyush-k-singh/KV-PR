@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.backends._legacy:_Backend"
+
+[project]
+name = "dart-kv"
+version = "0.1.0"
+description = "Learning-Augmented KV Cache Eviction with DART"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "numpy>=1.24",
+    "torch>=2.0",
+    "matplotlib>=3.7",
+    "pyyaml>=6.0",
+    "h5py>=3.8",
+    "scipy>=1.10",
+    "tqdm>=4.65",
+    "transformers>=4.36",
+    "datasets>=2.16",
+    "accelerate>=0.25",
+    "sentencepiece>=0.1.99",
+    "protobuf>=4.25",
+    "rouge-score>=0.1.2",
+]
+
+[project.scripts]
+dart-kv = "cli:main"
+
+[tool.setuptools.packages.find]
+include = ["src*"]
