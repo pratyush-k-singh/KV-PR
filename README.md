@@ -127,12 +127,7 @@ the full-KV reference, recording match rates at `k` in `{2,4,8,16}`.
 ## Recompute Paper Numbers
 
 The analyzers in `analysis/` read a SQLite database
-`analysis/paper_data.db` holding every per-cell measurement. The
-database is not shipped with this repository; reproduce it from your
-own audit runs by completing the full audit (see [Reproduce a Single
-Audit Cell](#reproduce-a-single-audit-cell), repeated across the
-three models, four priorities, four tiers, three ratios), rsyncing
-the pull directories into `analyses/`, and then:
+`analysis/paper_data.db` holding every per-cell measurement.
 
 ```bash
 python analysis/build_db.py             # build analysis/paper_data.db
@@ -150,29 +145,7 @@ python analysis/e2e_fidelity.py         # end-to-end fidelity summary
 ## HPC Notes
 
 The producer scripts run unchanged on any GPU with sufficient memory.
-Our reference runs used H100 80GB and, where noted, H200 141GB. The
-section below records the SLURM defaults and memory budget that
-constrain tier choice; the repository does not ship SLURM wrappers,
-so write your own around the CLI commands above.
-
-### Submission Template
-
-A working SLURM submission for the long-context decode probe needs
-these directives at minimum:
-
-```bash
-#SBATCH --partition=gpu
-#SBATCH --gres=gpu:h100:1
-#SBATCH --cpus-per-task=16
-#SBATCH --mem=80G
-#SBATCH --time=04:00:00
-```
-
-The `--cpus-per-task=16` line is load-bearing. The long-context
-decode probe does substantial CPU work between GPU kernels (mask
-construction, JSON / coverage writes, tokenizer plumbing,
-FlexAttention compilation). Without 16 CPUs, the GPU sits at 0%
-utilisation while the wall clock crawls.
+Our reference runs used H100 80GB and, where noted, H200 141GB.
 
 ### Memory Budget per Tier
 
@@ -270,18 +243,6 @@ repo before running the analyzers.
 | `longcontext_decode_probe_merge.py` | Merge multiple producer pulls (same cell, different prompt offsets). |
 | `e_e2e_accuracy.py` | End-to-end token-level reference-fidelity probe. |
 | `prepare_official_ruler.py` | Stage RULER prompts at a target tier with the model's tokenizer. |
-
-## Tests
-
-```bash
-python -m unittest discover tests -v
-```
-
-The test suite covers the per-prompt KL computation, the bootstrap
-CI procedure, the priority dispatch, the cache-perturbation
-power-iteration estimator (synthetic-operator unit tests recovering
-known top singular values within 1%), the LayerNorm placement and
-GQA emulation hooks, and the selector decision rule.
 
 ## Citation
 
